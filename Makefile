@@ -15,9 +15,7 @@ NAME = libmalloc.so
 CFLAGS   =  -Wall -Wextra -Werror -fPIC
 
 SRC      = malloc.c\
-           rb_tree.c
-
-TEST_SRC = main.c
+           tree.c
 
 INCLUDES = -I./includes
 
