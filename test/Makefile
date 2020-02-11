@@ -1,12 +1,15 @@
 NAME = run_test
 
 MALLOC_LIB = -lmalloc -L..
+export DYLD_LIBRARY_PATH = ..
+export LD_LIBRARY_PATH = ..
+
 
 CFLAGS   = -Wall -Wextra -Werror
 
 SRC      = main.c
 
-INCLUDES = -I./includes
+INCLUDES = -I./includes -I../includes
 
 OBJ_DIR = ./objs
 
@@ -14,7 +17,10 @@ OBJ = $(addprefix $(OBJ_DIR)/,$(SRC:.c=.o))
 
 SRC_DIR = .
 
-all: $(OBJ_DIR) $(NAME)
+lib:
+	make -C ..
+
+all: lib $(OBJ_DIR) $(NAME)
 
 $(OBJ_DIR):
 	mkdir -p $(OBJ_DIR)
@@ -34,5 +40,5 @@ fclean: clean
 
 re: fclean all
 
-run: all DYLD_LIBRARY_PATH = ..
+run: all 
 	./run_test
