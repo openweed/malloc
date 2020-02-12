@@ -2,12 +2,12 @@
 
 #include <stddef.h>
 
-static struct block *_delete1(struct block **root, struct block *node);
-static struct block *_delete2(struct block **root, struct block *node);
+static struct zone *_delete1(struct zone **root, struct zone *node);
+static struct zone *_delete2(struct zone **root, struct zone *node);
 
-struct block *insert(struct block **root, struct block *node)
+struct zone *insert(struct zone **root, struct zone *node)
 {
-    struct block *parent;
+    struct zone *parent;
 
     parent = NULL;
     while (*root)
@@ -26,9 +26,9 @@ struct block *insert(struct block **root, struct block *node)
 }
 
 
-struct block *search(struct block *root, uint16_t key)
+struct zone *search(struct zone *root, size_t key)
 {
-    struct block *ret;
+    struct zone *ret;
 
     if (root->max_block == key)
         return root;
@@ -48,7 +48,7 @@ struct block *search(struct block *root, uint16_t key)
         return NULL;
 }
 
-struct block *delete(struct block **root, struct block *node)
+struct zone *delete(struct zone **root, struct zone *node)
 {
     if (!node->left || !node->right)
         return _delete1(root, node); // case 1 and 2
@@ -56,9 +56,9 @@ struct block *delete(struct block **root, struct block *node)
         return _delete2(root, node);
 }
 
-static struct block *_delete1(struct block **root, struct block *node)
+static struct zone *_delete1(struct zone **root, struct zone *node)
 {
-    struct block *exist_node;
+    struct zone *exist_node;
 
     exist_node = node->left ? node->left : node->right;
     if (exist_node)
@@ -72,9 +72,9 @@ static struct block *_delete1(struct block **root, struct block *node)
     return node;
 }
 
-static struct block *_delete2(struct block **root, struct block *node)
+static struct zone *_delete2(struct zone **root, struct zone *node)
 {
-    struct block *replace_node;
+    struct zone *replace_node;
 
     replace_node = node->left;
     while (replace_node->right)
@@ -98,7 +98,7 @@ static struct block *_delete2(struct block **root, struct block *node)
     return node;
 }
 
-void print_tree(struct block *root)
+void print_tree(struct zone *root)
 {
     if (root->left)
         print_tree(root->left);
