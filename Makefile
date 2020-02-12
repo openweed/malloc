@@ -12,7 +12,7 @@
 
 NAME = libmalloc.so
 
-CFLAGS   =  -Wall -Wextra -Werror -fPIC
+CFLAGS   =  -Wall -Wextra -fPIC
 
 SRC      = malloc.c\
            tree.c

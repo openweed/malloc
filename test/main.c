@@ -5,9 +5,9 @@
 
 int main(void)
 {
-    printf("Node size: %zu\n", sizeof(struct block));
-    struct block arr[10];
-    struct block *root = NULL;
+    printf("Node size: %zu\n", sizeof(struct zone));
+    struct zone arr[10];
+    struct zone *root = NULL;
 
     memset(arr, 0, sizeof (arr));
     for (int i = 0; i < 10; ++i)
