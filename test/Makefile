@@ -5,7 +5,7 @@ export DYLD_LIBRARY_PATH = ..
 export LD_LIBRARY_PATH = ..
 
 
-CFLAGS   = -Wall -Wextra -Werror
+CFLAGS   = -Wall -Wextra -O0 -g3 -ggdb
 
 SRC      = main.c
 
@@ -17,10 +17,10 @@ OBJ = $(addprefix $(OBJ_DIR)/,$(SRC:.c=.o))
 
 SRC_DIR = .
 
+all: lib $(OBJ_DIR) $(NAME)
+
 lib:
 	make -C ..
-
-all: lib $(OBJ_DIR) $(NAME)
 
 $(OBJ_DIR):
 	mkdir -p $(OBJ_DIR)
@@ -42,3 +42,6 @@ re: fclean all
 
 run: all 
 	./run_test
+
+run-gdb: all
+	gdb ./run_test

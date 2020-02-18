@@ -1,8 +1,14 @@
 Makefile
 
+includes/zone.h
+src/common.c
+src/free.c
 src/malloc.c
 
 includes/malloc.h
+includes/common.h
 
-src/tree.c
+src/realloc.c
+src/zone.c
+src/zone_tree.c
 test/main.c

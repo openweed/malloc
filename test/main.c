@@ -1,43 +1,39 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "malloc.h"
+#include "zone.h"
 
 int main(void)
 {
-    printf("Node size: %zu\n", sizeof(struct zone));
-    struct zone arr[10];
-    struct zone *root = NULL;
+    void *p[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-    memset(arr, 0, sizeof (arr));
-    for (int i = 0; i < 10; ++i)
-        arr[i].max_block = i * 2;
-
-    for (int i = 0; i < 10; ++i)
-        insert(&root, &arr[i]);
-
-    for (int i = 0; i < 10; i += 2) {
-        delete(&root, &arr[i]);
+    p[1] = ft_malloc(123);
+    for (int i = 0; i < 100000000; ++i)
+    {
+        *p = ft_malloc(23);
+        ft_free(*p);
     }
-
-    for (int i = 0; i < 10; i += 2) {
-        insert(&root, &arr[i]);
-    }
-
-    for (int i = 1; i < 10; i += 2) {
-        delete(&root, &arr[i]);
-    }
-    for (int i = 1; i < 10; i += 2) {
-        insert(&root, &arr[i]);
-    }
-    for (int i = 0; i < 10; ++i) {
-        delete(&root, &arr[i]);
-    }
-    for (int i = 0; i < 10; i += 2) {
-        insert(&root, &arr[i]);
-    }
-    printf("root: %p\n", root);
-    print_tree(root);
-    printf("blocks inserted\n");
+    ft_free(p[1]);
+    printf("End\n");
     return 0;
 }
+
+//    void *p[16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+//    p[0] = ft_malloc(8);
+//    printf("Data: %p\n", p[0]);
+//    p[1] = ft_malloc(8);
+//    printf("Data: %p\n", p[1]);
+//    p[2] = ft_malloc(8);
+//    printf("Data: %p\n", p[2]);
+//    p[3] = ft_malloc(8);
+//    printf("Data: %p\n", p[3]);
+//    p[4] = ft_malloc(8);
+//    printf("Data: %p\n", p[4]);
+//    ft_free(p[2]);
+//    ft_free(p[1]);
+//    ft_free(p[3]);
+//    p[0] = ft_malloc(40);
+//    printf("Data: %p\n", p[0]);

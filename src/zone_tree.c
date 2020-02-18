@@ -1,11 +1,11 @@
-#include "malloc.h"
+#include "zone.h"
 
 #include <stddef.h>
 
 static struct zone *_delete1(struct zone **root, struct zone *node);
 static struct zone *_delete2(struct zone **root, struct zone *node);
 
-struct zone *insert(struct zone **root, struct zone *node)
+struct zone *zone_insert(struct zone **root, struct zone *node)
 {
     struct zone *parent;
 
@@ -13,7 +13,7 @@ struct zone *insert(struct zone **root, struct zone *node)
     while (*root)
     {
         parent = *root;
-        if (node->max_block < (*root)->max_block)
+        if (node->max_block_size < (*root)->max_block_size)
             root = &(*root)->left;
         else
             root = &(*root)->right;
@@ -26,29 +26,29 @@ struct zone *insert(struct zone **root, struct zone *node)
 }
 
 
-struct zone *search(struct zone *root, size_t key)
+struct zone *zone_search(struct zone *root, size_t key)
 {
     struct zone *ret;
 
-    if (root->max_block == key)
+    if (root->max_block_size == key)
         return root;
-    if (root->max_block > key)
+    if (root->max_block_size > key)
     {
         if (!root->left)
             return root;
-        ret = search(root->left, key);
+        ret = zone_search(root->left, key);
         if (ret)
             return ret;
         else
             return root;
     }
     if (root->right)
-        return search(root->right, key);
+        return zone_search(root->right, key);
     else
         return NULL;
 }
 
-struct zone *delete(struct zone **root, struct zone *node)
+struct zone *zone_remove(struct zone **root, struct zone *node)
 {
     if (!node->left || !node->right)
         return _delete1(root, node); // case 1 and 2
@@ -103,7 +103,7 @@ void print_tree(struct zone *root)
     if (root->left)
         print_tree(root->left);
     printf("addr: %p\n", root);
-    printf("    key: %u\n", root->max_block);
+    printf("    key: %lu\n", root->max_block_size);
     printf("    left  : %p\n", root->left);
     printf("    right : %p\n", root->right);
     printf("    parent: %p\n", root->parent);

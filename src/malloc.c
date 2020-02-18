@@ -1,71 +1,60 @@
-#include <unistd.h>
-#include <sys/mman.h>
 
-#include "malloc.h"
+#include "common.h"
+#include "zone.h"
 
-static struct zone *root = NULL;
-
-static struct zone *new_zone()
+struct block *get_free_block(struct zone *zone, bsize_t bsize, bidx_t **prev)
 {
-    struct zone *zone;
-    struct block *last_block;
-    size_t blocks_count;
-    size_t size;
-
-    size = getpagesize() * ZONE_PAGES;
-    zone = mmap(NULL, size, PROT_READ | PROT_WRITE,
-                MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-    if (zone == MAP_FAILED)
-    {
-        return NULL;
-    }
-    blocks_count = (size - sizeof (struct zone)) / BLOCK_SIZE;
-    zone->max_block_size = blocks_count;
-    zone->first_free_offset = NULL_OFFSET;
-    zone->blocks_count = blocks_count;
-    zone->first_block_offset = 0;
-}
-
-static struct zone *get_zone(size_t blocks)
-{
-    struct zone *zone;
-
-    zone = search(root, blocks);
-    if (!zone)
-    {
-        zone = new_zone();
-        if (!zone)
-            return NULL;
-        insert(&root, zone);
-    }
-    return zone;
-}
-
-offset_t get_free_block(struct zone *zone, size_t blocks_count)
-{
-    offset_t off;
+    bidx_t i;
     struct block *blocks;
 
-    off = zone->first_free_offset;
+    i = zone->first_free_idx;
+    *prev = &zone->first_free_idx;
     blocks = zone->blocks;
-    while (1)
+    while (blocks[i].size < bsize && blocks[i].next_free < zone->blocks_end) // XXX Delete next_free check
     {
-
+        *prev = &blocks[i].next_free;
+        i = blocks[i].next_free;
     }
+    return &blocks[i];
 }
 
-struct block *reserve_block(struct zone *zone, bsize_t size)
+struct block *reserve_block(struct zone *zone, bsize_t bsize)
 {
-    offset_t pre_off;
-    offset_t blk_off;
-    offset_t post_off;
+    bidx_t *prev_free;
+    struct block *block;
+    struct block *free_part;
+
+    block = get_free_block(zone, bsize, &prev_free);
+    if (block->size == bsize)
+    {
+        *prev_free = block->next_free;
+    }
+    else
+    {
+        free_part = &block[bsize];
+        free_part->size = block->size - bsize;
+        free_part->prev = block->idx;
+        free_part->idx = block->idx + bsize;
+        free_part->next_free = block->next_free;
+        *prev_free = free_part->idx;
+        block->size = bsize;
+    }
+    block->next_free = 0;
+    if (block->idx == zone->max_block_idx)
+        set_max_block(zone);
+    return block;
+}
+
+void *ft_malloc(size_t size)
+{
+    bsize_t bsize;
+    struct zone *zone;
     struct block *block;
 
-    pre_off = zone->first_free_offset;
-}
-
-void *malloc(size_t size)
-{
-	(void)size;
-	return NULL;
+    bsize = size / BLOCK_BYTES + ((size % BLOCK_BYTES) ? 1 : 0) + HEADER_BLOCKS;
+    zone = get_zone(bsize);
+    if (!zone)
+        return NULL;
+    block = reserve_block(zone, bsize);
+    return (void *)block->data;
 }

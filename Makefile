@@ -12,10 +12,18 @@
 
 NAME = libmalloc.so
 
-CFLAGS   =  -Wall -Wextra -fPIC
+CFLAGS   =  -Wall -Wextra -fPIC -O0 -g3 -ggdb
 
 SRC      = malloc.c\
-           tree.c
+           free.c\
+           realloc.c\
+           zone.c\
+           zone_tree.c\
+           common.c
+
+INC      = malloc.h\
+           zone_tree.h\
+           common.h
 
 INCLUDES = -I./includes
 
